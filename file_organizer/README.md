@@ -25,49 +25,51 @@
 
 ```
 Library/
-├── 01_Programming/          # 编程与算法
-│   ├── Cpp/                 # C++ 语言与标准库
-│   ├── Lua/                 # Lua 脚本语言
-│   ├── Python/              # Python 语言
-│   ├── Concurrency/         # 并发与多线程编程
-│   ├── DesignPatterns/      # 设计模式
-│   ├── Algorithms/          # 算法与数据结构
-│   ├── Network/             # 网络编程
-│   └── Memory/              # 内存管理
-├── 02_GameEngines/          # 游戏引擎
-│   ├── UnrealEngine/        # 虚幻引擎
-│   ├── Unity/               # Unity引擎
-│   └── Custom/              # 自研引擎
-├── 03_Rendering/            # 图形渲染
-│   ├── RealTime/            # 实时渲染
-│   ├── RayTracing/          # 光线追踪
-│   ├── PBR/                 # 基于物理的渲染
-│   ├── Shaders/             # 着色器技术
-│   ├── GlobalIllumination/  # 全局光照
-│   ├── PostProcessing/      # 后处理技术
-│   └── Mobile/              # 移动端渲染
-├── 04_GraphicsPapers/       # 图形学论文
-│   ├── Siggraph/            # SIGGRAPH 论文集
-│   ├── GDC/                 # GDC 技术分享
-│   ├── PG/                  # 图形学前沿论文
-│   └── Courses/             # 课程讲义与笔记
-├── 05_Mathematics/          # 数学基础
-│   ├── LinearAlgebra/       # 线性代数
-│   ├── Calculus/            # 微积分
-│   ├── DiscreteMath/        # 离散数学
-│   ├── Probability/         # 概率与统计
-│   └── Geometry/            # 计算几何
-├── 06_AI_ML/                # 人工智能与机器学习
-│   ├── DeepLearning/        # 深度学习
-│   ├── GameAI/              # 游戏AI
-│   └── NLP/                 # 自然语言处理
-├── 07_Tools/                # 工具与中间件
-│   ├── VersionControl/      # 版本控制
-│   ├── Profiling/           # 性能分析
-│   └── DCC/                 # 数字内容创作工具
-├── 08_Archive/              # 归档资料
-│   └── OldVersions/         # 旧版本书籍
-├── 99_Unsorted/             # 待分类
+├── 01_编程/                 # 编程与算法
+│   ├── Cpp/                 # C++
+│   ├── CSharp/              # C#
+│   ├── Lua/                 # Lua
+│   ├── Python/              # Python
+│   ├── 并发/                # 并发与多线程
+│   ├── 设计模式/            # Design Patterns
+│   ├── 算法/                # 算法与数据结构
+│   ├── 网络/                # 网络编程
+│   └── 内存/                # 内存管理
+├── 02_游戏引擎/             # 游戏引擎
+│   ├── Unreal/              # 虚幻引擎 Unreal Engine
+│   ├── Unity/               # Unity
+│   └── 自研引擎/            # Custom Engine
+├── 03_渲染/                 # 图形渲染
+│   ├── 实时渲染/            # Real-Time Rendering
+│   ├── 光线追踪/            # Ray Tracing
+│   ├── PBR/                 # PBR
+│   ├── 着色器/              # Shaders
+│   ├── 全局光照/            # Global Illumination
+│   ├── 后处理/              # Post Processing
+│   └── 移动端/              # Mobile Rendering
+├── 04_图形学论文/           # 图形学论文
+│   ├── Siggraph/            # SIGGRAPH
+│   ├── GDC/                 # GDC
+│   ├── 图形学/              # Computer Graphics
+│   └── 课程讲义/            # Courses & Tutorials
+├── 05_数学/                 # 数学基础
+│   ├── 线性代数/            # Linear Algebra
+│   ├── 微积分/              # Calculus
+│   ├── 离散数学/            # Discrete Math
+│   ├── 概率统计/            # Probability & Statistics
+│   └── 几何/                # Geometry
+├── 06_人工智能/             # 人工智能与机器学习
+│   ├── 深度学习/            # Deep Learning
+│   ├── 游戏AI/              # Game AI
+│   └── NLP/                 # NLP
+├── 07_工具/                 # 工具与中间件
+│   ├── 版本控制/            # Version Control
+│   ├── 性能分析/            # Profiling
+│   └── DCC/                 # DCC
+├── 98_归档/                 # 归档资料
+│   ├── 旧版本/              # Old Versions
+│   └── 已过时/              # Deprecated
+├── 99_待分类/               # 待分类
 └── .duplicates/             # 重复文件
 ```
 

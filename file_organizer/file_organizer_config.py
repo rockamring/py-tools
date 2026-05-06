@@ -22,7 +22,7 @@ SOURCE_DIRS = [
 ]
 
 # 目标整理目录（新建的子目录）
-TARGET_BASE_DIR = r"F:\luobin\Library"
+TARGET_BASE_DIR = r"G:\myproj\game_dev_docs"
 
 # =============================================================================
 # 目录结构配置 - 符合游戏技术行业标准
@@ -30,83 +30,83 @@ TARGET_BASE_DIR = r"F:\luobin\Library"
 
 # 主分类目录结构
 DIRECTORY_STRUCTURE = {
-    "01_Programming": {
+    "01_编程": {
         "description": "编程与算法",
         "subdirs": {
-            "Cpp": "C++ 语言与标准库",
-            "CSharp": "C# 语言与.NET",
-            "Lua": "Lua 脚本语言",
-            "Python": "Python 语言",
-            "Concurrency": "并发与多线程编程",
-            "DesignPatterns": "设计模式",
-            "Algorithms": "算法与数据结构",
-            "Network": "网络编程",
-            "Memory": "内存管理",
+            "Cpp": "C++",
+            "CSharp": "C#",
+            "Lua": "Lua",
+            "Python": "Python",
+            "并发": "Concurrency",
+            "设计模式": "Design Patterns",
+            "算法": "Algorithms",
+            "网络": "Network",
+            "内存": "Memory",
         }
     },
-    "02_GameEngines": {
+    "02_游戏引擎": {
         "description": "游戏引擎",
         "subdirs": {
-            "UnrealEngine": "虚幻引擎",
-            "Unity": "Unity引擎",
-            "Custom": "自研引擎",
+            "Unreal": "虚幻引擎 Unreal Engine",
+            "Unity": "Unity",
+            "自研引擎": "Custom Engine",
         }
     },
-    "03_Rendering": {
+    "03_渲染": {
         "description": "图形渲染",
         "subdirs": {
-            "RealTime": "实时渲染",
-            "RayTracing": "光线追踪",
-            "PBR": "基于物理的渲染",
-            "Shaders": "着色器技术",
-            "GlobalIllumination": "全局光照",
-            "PostProcessing": "后处理技术",
-            "Mobile": "移动端渲染",
+            "实时渲染": "Real-Time Rendering",
+            "光线追踪": "Ray Tracing",
+            "PBR": "PBR",
+            "着色器": "Shaders",
+            "全局光照": "Global Illumination",
+            "后处理": "Post Processing",
+            "移动端": "Mobile",
         }
     },
-    "04_GraphicsPapers": {
+    "04_图形学论文": {
         "description": "图形学论文",
         "subdirs": {
-            "Siggraph": "SIGGRAPH 论文集",
-            "GDC": "GDC 技术分享",
-            "PG": "图形学前沿论文",
-            "Courses": "课程讲义与笔记",
+            "Siggraph": "SIGGRAPH",
+            "GDC": "GDC",
+            "图形学": "Computer Graphics",
+            "课程讲义": "Courses & Tutorials",
         }
     },
-    "05_Mathematics": {
+    "05_数学": {
         "description": "数学基础",
         "subdirs": {
-            "LinearAlgebra": "线性代数",
-            "Calculus": "微积分",
-            "DiscreteMath": "离散数学",
-            "Probability": "概率与统计",
-            "Geometry": "计算几何",
+            "线性代数": "Linear Algebra",
+            "微积分": "Calculus",
+            "离散数学": "Discrete Math",
+            "概率统计": "Probability & Statistics",
+            "几何": "Geometry",
         }
     },
-    "06_AI_ML": {
+    "06_人工智能": {
         "description": "人工智能与机器学习",
         "subdirs": {
-            "DeepLearning": "深度学习",
-            "GameAI": "游戏AI",
-            "NLP": "自然语言处理",
+            "深度学习": "Deep Learning",
+            "游戏AI": "Game AI",
+            "NLP": "NLP",
         }
     },
-    "07_Tools": {
+    "07_工具": {
         "description": "工具与中间件",
         "subdirs": {
-            "VersionControl": "版本控制",
-            "Profiling": "性能分析",
-            "DCC": "数字内容创作工具",
+            "版本控制": "Version Control",
+            "性能分析": "Profiling",
+            "DCC": "DCC",
         }
     },
-    "08_Archive": {
+    "98_归档": {
         "description": "归档资料",
         "subdirs": {
-            "OldVersions": "旧版本书籍",
-            "Deprecated": "已过时技术",
+            "旧版本": "Old Versions",
+            "已过时": "Deprecated",
         }
     },
-    "99_Unsorted": {
+    "99_待分类": {
         "description": "待分类",
         "subdirs": {}
     },
@@ -118,81 +118,81 @@ DIRECTORY_STRUCTURE = {
 
 CLASSIFICATION_RULES = {
     # 编程语言
-    "01_Programming/Cpp": [
+    "01_编程/Cpp": [
         r"(?i)c\+\+", r"(?i)cpp", r"(?i)boost", r"(?i)stl",
         r"(?i)现代c\+\+", r"(?i)c\+\+11", r"(?i)c\+\+14", r"(?i)c\+\+17",
     ],
-    "01_Programming/Lua": [
+    "01_编程/Lua": [
         r"(?i)lua", r"(?i)luajit",
     ],
-    "01_Programming/Python": [
+    "01_编程/Python": [
         r"(?i)python",
     ],
-    "01_Programming/Concurrency": [
+    "01_编程/并发": [
         r"(?i)concurrency", r"(?i)concurrent", r"(?i)多线程", r"(?i)并发",
         r"(?i)thread", r"(?i)atomic",
     ],
-    "01_Programming/Memory": [
+    "01_编程/内存": [
         r"(?i)memory", r"(?i)内存", r"(?i)gc", r"(?i)garbage",
     ],
-    "01_Programming/Network": [
+    "01_编程/网络": [
         r"(?i)netty", r"(?i)network", r"(?i)网络",
     ],
-    "01_Programming/Algorithms": [
+    "01_编程/算法": [
         r"(?i)algorithm", r"(?i)数据结构",
     ],
 
     # 游戏引擎
-    "02_GameEngines/UnrealEngine": [
+    "02_游戏引擎/Unreal": [
         r"(?i)unreal", r"(?i)ue4", r"(?i)ue5", r"(?i)虚幻",
         r"(?i)frostbite",  # 寒霜引擎相关
     ],
-    "02_GameEngines/Unity": [
+    "02_游戏引擎/Unity": [
         r"(?i)unity", r"(?i)urp",
     ],
 
     # 图形渲染
-    "03_Rendering/RealTime": [
+    "03_渲染/实时渲染": [
         r"(?i)real.?time", r"(?i)实时渲染", r"(?i)modern.?rendering",
         r"(?i)metal",
     ],
-    "03_Rendering/RayTracing": [
+    "03_渲染/光线追踪": [
         r"(?i)ray.?trac", r"(?i)光线追踪",
     ],
-    "03_Rendering/PBR": [
+    "03_渲染/PBR": [
         r"(?i)pbr", r"(?i)physically.?based", r"(?i)物理.?渲染",
     ],
-    "03_Rendering/GlobalIllumination": [
+    "03_渲染/全局光照": [
         r"(?i)global.?illumination", r"(?i)gi\b", r"(?i)全局光照",
     ],
-    "03_Rendering/Shaders": [
+    "03_渲染/着色器": [
         r"(?i)shader", r"(?i)shading", r"(?i)着色器",
     ],
-    "03_Rendering/Mobile": [
+    "03_渲染/移动端": [
         r"(?i)mobile", r"(?i)ios", r"(?i)android", r"(?i)移动端",
     ],
 
     # 数学
-    "05_Mathematics/LinearAlgebra": [
+    "05_数学/线性代数": [
         r"(?i)linear.?algebra", r"(?i)线性代数",
     ],
-    "05_Mathematics/Calculus": [
+    "05_数学/微积分": [
         r"(?i)calculus", r"(?i)微积分",
     ],
-    "05_Mathematics/Probability": [
+    "05_数学/概率统计": [
         r"(?i)probability", r"(?i)statistic", r"(?i)概率", r"(?i)统计",
     ],
 
     # AI
-    "06_AI_ML/DeepLearning": [
+    "06_人工智能/深度学习": [
         r"(?i)deep.?learn", r"(?i)深度学习", r"(?i)神经网络",
     ],
 
     # 论文分类
-    "04_GraphicsPapers/Siggraph": [
+    "04_图形学论文/Siggraph": [
         r"(?i)siggraph", r"(?i)s20\d{2}", r"(?i)s201\d",
     ],
-    "04_GraphicsPapers/GDC": [
+    "04_图形学论文/GDC": [
         r"(?i)gdc", r"(?i)devcon", r"(?i)fest",
     ],
 }
@@ -239,7 +239,6 @@ DUPLICATE_ACTION = 'move'
 # 版本号匹配模式（用于检测旧版本书籍）
 VERSION_PATTERNS = [
     r'第\s*(\d+)\s*版',  # 中文版式：第X版
-    r'第\s*(\d+)\s*版',  # 中文版式：第X版
     r'\b(\d+)\s*ed',      # 英文版式：X ed
     r'\bedition\s*(\d+)', # 英文版式：edition X
     r'\bv(\d+)',          # vX 版本号
@@ -264,7 +263,7 @@ LOG_LEVEL = 'INFO'
 INTERACTIVE = True
 
 # 待分类目录
-UNSORTED_DIR = "99_Unsorted"
+UNSORTED_DIR = "99_待分类"
 
 # 归档目录
-ARCHIVE_DIR = "08_Archive"
+ARCHIVE_DIR = "98_归档"

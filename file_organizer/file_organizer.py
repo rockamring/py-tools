@@ -27,7 +27,7 @@ import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple, Optional, Set
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from collections import defaultdict
 import file_organizer_config as config
 
@@ -70,6 +70,12 @@ class OrganizeResult:
     archived_files: int = 0
     unsorted_files: int = 0
     errors: List[str] = None
+    # 详细记录
+    organized_list: List[Tuple[str, str]] = field(default_factory=list)  # (文件名, 目标分类)
+    duplicate_list: List[Tuple[str, str]] = field(default_factory=list)  # (文件名, 重复来源)
+    archived_list: List[Tuple[str, int]] = field(default_factory=list)   # (文件名, 版本号)
+    unsorted_list: List[str] = field(default_factory=list)               # 文件名列表
+    error_list: List[Tuple[str, str]] = field(default_factory=list)      # (文件名, 错误信息)
 
     def __post_init__(self):
         if self.errors is None:
@@ -379,8 +385,8 @@ class FileOrganizer:
             self.logger.error(f"移动失败 {source}: {e}")
             return False
 
-    def organize(self, files: List[FileInfo], dry_run: bool = False,
-                 delete_source: bool = False) -> OrganizeResult:
+    def organize(self, files: List[FileInfo], duplicates: List[Tuple[FileInfo, FileInfo]],
+                 dry_run: bool = False, delete_source: bool = False) -> OrganizeResult:
         """执行文件整理"""
         self.logger.info(f"{'[模拟模式] ' if dry_run else ''}开始整理文件...")
 
@@ -388,19 +394,42 @@ class FileOrganizer:
         if not dry_run:
             self.dir_manager.setup()
 
-        self.result.total_files = len(files)
+        self.result.total_files = len(files) + len(duplicates)
+
+        # 处理重复文件
+        for original, dup in duplicates:
+            self.result.duplicate_files += 1
+            self.result.duplicate_list.append((dup.name, original.name))
+            
+            # 根据配置处理重复文件
+            if config.DUPLICATE_ACTION == 'move':
+                dup_target = self.target_dir / ".duplicates" / dup.name
+                if not dry_run:
+                    self.move_file(dup.path, dup_target, dry_run)
+                self.logger.info(f"[重复] 移动重复文件到 .duplicates: {dup.name}")
+            elif config.DUPLICATE_ACTION == 'delete':
+                if not dry_run:
+                    try:
+                        dup.path.unlink()
+                        self.logger.info(f"[重复] 删除重复文件: {dup.name}")
+                    except Exception as e:
+                        self.logger.error(f"删除重复文件失败 {dup.name}: {e}")
+            # elif config.DUPLICATE_ACTION == 'skip':
+            #     跳过不处理
 
         for file_info in files:
             # 检查是否是旧版本需要归档
             target_category = file_info.category
             if file_info.version and file_info.version < 3:  # 假设第3版以下算旧版本
-                target_category = f"{config.ARCHIVE_DIR}/OldVersions"
+                target_category = f"{config.ARCHIVE_DIR}/旧版本"
                 self.result.archived_files += 1
+                self.result.archived_list.append((file_info.name, file_info.version))
 
             # 如果没有分类，放入待分类
             if not target_category:
                 target_category = config.UNSORTED_DIR
                 self.result.unsorted_files += 1
+                self.result.unsorted_list.append(file_info.name)
 
             # 获取目标路径
             target_path = self.dir_manager.get_target_path(
@@ -413,11 +442,13 @@ class FileOrganizer:
             if existing:
                 self.logger.debug(f"目标目录已存在相同文件: {file_info.name}")
                 self.result.duplicate_files += 1
+                self.result.duplicate_list.append((file_info.name, str(existing)))
                 continue
 
             # 执行移动
             if self.move_file(file_info.path, target_path, dry_run):
                 self.result.organized_files += 1
+                self.result.organized_list.append((file_info.name, target_category))
                 if file_info.content_hash:
                     self.target_files[file_info.content_hash] = target_path
 
@@ -430,6 +461,7 @@ class FileOrganizer:
                             shutil.rmtree(file_info.path)
                     except Exception as e:
                         self.logger.error(f"删除源文件失败 {file_info.path}: {e}")
+                        self.result.error_list.append((file_info.name, str(e)))
 
         return self.result
 
@@ -445,32 +477,91 @@ class ReportGenerator:
         self.logger = logger
 
     def generate(self, result: OrganizeResult, output_path: Optional[Path] = None) -> str:
-        """生成整理报告"""
-        report_lines = [
-            "=" * 60,
-            "文件整理报告",
-            "=" * 60,
-            f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            "",
-            "统计信息:",
-            f"  总文件数: {result.total_files}",
-            f"  已整理: {result.organized_files}",
-            f"  重复文件: {result.duplicate_files}",
-            f"  归档文件: {result.archived_files}",
-            f"  待分类: {result.unsorted_files}",
-            "",
-        ]
+        """生成详细整理报告"""
+        lines = []
 
-        if result.errors:
-            report_lines.extend([
-                "错误列表:",
-                *[f"  - {e}" for e in result.errors],
-                "",
-            ])
+        def add(line=""):
+            lines.append(line)
 
-        report_lines.append("=" * 60)
+        add("=" * 70)
+        add("文件整理报告")
+        add("=" * 70)
+        add(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        add("")
 
-        report = "\n".join(report_lines)
+        # 统计摘要
+        add("【统计摘要】")
+        add(f"  总文件数: {result.total_files}")
+        add(f"  已整理: {result.organized_files}")
+        add(f"  重复文件: {result.duplicate_files}")
+        add(f"  归档文件: {result.archived_files}")
+        add(f"  待分类: {result.unsorted_files}")
+        if result.error_list:
+            add(f"  错误: {len(result.error_list)}")
+        add("")
+
+        # 已整理文件详情
+        if result.organized_list:
+            add("=" * 70)
+            add(f"【已整理文件】({len(result.organized_list)} 个)")
+            add("=" * 70)
+            # 按分类分组
+            by_category = defaultdict(list)
+            for name, category in result.organized_list:
+                by_category[category].append(name)
+
+            for category in sorted(by_category.keys()):
+                add(f"\n📁 {category}/")
+                for name in sorted(by_category[category]):
+                    add(f"   📄 {name}")
+            add("")
+
+        # 归档文件详情
+        if result.archived_list:
+            add("=" * 70)
+            add(f"【归档文件】({len(result.archived_list)} 个)")
+            add("=" * 70)
+            for name, version in sorted(result.archived_list, key=lambda x: x[1]):
+                add(f"   📦 {name} (第{version}版)")
+            add("")
+
+        # 重复文件详情
+        if result.duplicate_list:
+            add("=" * 70)
+            add(f"【重复文件】({len(result.duplicate_list)} 个)")
+            add("=" * 70)
+            for name, source in result.duplicate_list:
+                add(f"   🔄 {name}")
+                add(f"      └─ 重复自: {source}")
+            add("")
+
+        # 待分类文件详情
+        if result.unsorted_list:
+            add("=" * 70)
+            add(f"【待分类文件】({len(result.unsorted_list)} 个)")
+            add("=" * 70)
+            for name in sorted(result.unsorted_list):
+                add(f"   ❓ {name}")
+            add("")
+            add("提示: 以上文件无法自动分类，请手动移动到合适的目录")
+            add("      或更新 CLASSIFICATION_RULES 添加新的分类规则")
+            add("")
+
+        # 错误详情
+        if result.error_list:
+            add("=" * 70)
+            add(f"【错误列表】({len(result.error_list)} 个)")
+            add("=" * 70)
+            for name, error in result.error_list:
+                add(f"   ❌ {name}")
+                add(f"      └─ 错误: {error}")
+            add("")
+
+        add("=" * 70)
+        add("报告结束")
+        add("=" * 70)
+
+        report = "\n".join(lines)
 
         if output_path:
             output_path.write_text(report, encoding='utf-8')
@@ -514,16 +605,16 @@ class OrganizerApp:
         unique_files, duplicates = self.duplicate_detector.find_duplicates(files)
 
         if duplicates:
-            self.logger.info(f"发现 {len(duplicates)} 个重复文件将跳过")
+            self.logger.info(f"发现 {len(duplicates)} 个重复文件")
 
         # 4. 整理文件
-        result = self.organizer.organize(unique_files, dry_run, delete_source)
+        result = self.organizer.organize(unique_files, duplicates, dry_run, delete_source)
 
         # 5. 生成报告
         report_path = Path(config.TARGET_BASE_DIR) / f"organize_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         report = self.report_generator.generate(result, report_path)
 
-        self.logger.info("\n" + report)
+        print("\n" + report)
 
         return result
 
