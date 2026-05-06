@@ -24,6 +24,28 @@ SOURCE_DIRS = [
 # 目标整理目录（新建的子目录）
 TARGET_BASE_DIR = r"G:\myproj\game_dev_docs"
 
+def get_source_dirs():
+    """
+    获取完整的源目录列表
+    - 待分类目录作为第一个源目录（优先处理）
+    - 排除目标目录下的所有子目录（防止死循环）
+    """
+    dirs = []
+
+    # 1. 首先添加待分类目录（始终优先处理）
+    unsorted_full_path = os.path.join(TARGET_BASE_DIR, UNSORTED_DIR)
+    dirs.append(unsorted_full_path)
+
+    # 2. 添加其他源目录，但排除目标目录下的子目录
+    target_norm = os.path.normpath(TARGET_BASE_DIR).lower()
+    for d in SOURCE_DIRS:
+        d_norm = os.path.normpath(d).lower()
+        # 跳过目标目录及其子目录（防止死循环）
+        if not d_norm.startswith(target_norm):
+            dirs.append(d)
+
+    return dirs
+
 # =============================================================================
 # 目录结构配置 - 符合游戏技术行业标准
 # =============================================================================

@@ -128,6 +128,16 @@ class FileScanner:
         self.source_dirs = [Path(d) for d in source_dirs]
         self.logger = logger
         self.supported_exts = set(config.SUPPORTED_EXTENSIONS.keys())
+        # 目标目录，用于防止扫描目标目录下的子目录（死循环保护）
+        self.target_dir = Path(config.TARGET_BASE_DIR).resolve()
+
+    def _is_in_target_dir(self, path: Path) -> bool:
+        """检查路径是否在目标目录下（防止死循环）"""
+        try:
+            path.resolve().relative_to(self.target_dir)
+            return True
+        except ValueError:
+            return False
 
     def scan(self) -> List[FileInfo]:
         """扫描所有源目录，返回文件信息列表"""
@@ -138,6 +148,14 @@ class FileScanner:
             if not source_dir.exists():
                 self.logger.warning(f"源目录不存在: {source_dir}")
                 continue
+
+            # 安全检查：如果源目录在目标目录下（除了待分类目录），则跳过
+            source_resolved = source_dir.resolve()
+            if self._is_in_target_dir(source_resolved):
+                unsorted_path = Path(config.TARGET_BASE_DIR) / config.UNSORTED_DIR
+                if source_resolved != unsorted_path.resolve():
+                    self.logger.warning(f"跳过目标目录下的子目录: {source_dir}")
+                    continue
 
             self.logger.info(f"扫描目录: {source_dir}")
             count = 0
@@ -437,6 +455,23 @@ class FileOrganizer:
                 file_info.name
             )
 
+            # 检查文件是否已经在正确的目标位置（防止死循环）
+            file_parent = file_info.path.parent.resolve()
+            target_parent = target_path.parent.resolve()
+
+            # 如果文件已经在目标目录（除了待分类目录需要二次处理的情况）
+            if file_parent == target_parent:
+                # 如果已经在待分类目录且无法分类，跳过
+                if target_category == config.UNSORTED_DIR:
+                    self.logger.debug(f"文件已在待分类目录且无法分类，跳过: {file_info.name}")
+                    continue
+                # 如果已经在正确的分类目录，跳过
+                else:
+                    self.logger.debug(f"文件已在正确位置，跳过: {file_info.name}")
+                    self.result.organized_files += 1
+                    self.result.organized_list.append((file_info.name, target_category))
+                    continue
+
             # 检查目标目录是否已有相同文件
             existing = self.check_target_duplicate(file_info)
             if existing:
@@ -579,7 +614,7 @@ class OrganizerApp:
 
     def __init__(self):
         self.logger = setup_logging(config.LOG_LEVEL)
-        self.scanner = FileScanner(config.SOURCE_DIRS, self.logger)
+        self.scanner = FileScanner(config.get_source_dirs(), self.logger)
         self.analyzer = FileAnalyzer(self.logger)
         self.duplicate_detector = DuplicateDetector(self.logger)
         self.organizer = FileOrganizer(Path(config.TARGET_BASE_DIR), self.logger)
