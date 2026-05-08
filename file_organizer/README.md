@@ -38,7 +38,7 @@ Library/
 ├── 02_游戏引擎/             # 游戏引擎
 │   ├── Unreal/              # 虚幻引擎 Unreal Engine
 │   ├── Unity/               # Unity
-│   └── 自研引擎/            # Custom Engine
+│   └── General/            # 通用技术
 ├── 03_渲染/                 # 图形渲染
 │   ├── 实时渲染/            # Real-Time Rendering
 │   ├── 光线追踪/            # Ray Tracing

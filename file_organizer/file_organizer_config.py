@@ -71,7 +71,7 @@ DIRECTORY_STRUCTURE = {
         "subdirs": {
             "Unreal": "虚幻引擎 Unreal Engine",
             "Unity": "Unity",
-            "自研引擎": "Custom Engine",
+            "General": "通用技术",
         }
     },
     "03_渲染": {
@@ -171,6 +171,9 @@ CLASSIFICATION_RULES = {
     ],
     "02_游戏引擎/Unity": [
         r"(?i)unity", r"(?i)urp",
+    ],
+    "02_游戏引擎/General": [
+        r"(?i)game.?engine",
     ],
 
     # 图形渲染
