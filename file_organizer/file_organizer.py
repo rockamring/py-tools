@@ -313,7 +313,7 @@ class DuplicateDetector:
 # =============================================================================
 
 class DirectoryManager:
-    """目录管理器 - 创建和管理目标目录结构"""
+    """目录管理器 - 按需创建和管理目标目录结构"""
 
     def __init__(self, base_dir: Path, logger: logging.Logger):
         self.base_dir = base_dir
@@ -321,37 +321,37 @@ class DirectoryManager:
         self.created_dirs: Set[Path] = set()
 
     def setup(self) -> None:
-        """初始化目录结构"""
-        self.logger.info(f"初始化目录结构: {self.base_dir}")
+        """初始化基础目录结构（仅创建必要的根目录）"""
+        self.logger.info(f"初始化基础目录: {self.base_dir}")
 
-        # 创建主目录
+        # 仅创建主目录
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
-        # 创建子目录
-        for main_dir, info in config.DIRECTORY_STRUCTURE.items():
-            main_path = self.base_dir / main_dir
-            main_path.mkdir(exist_ok=True)
-
-            for sub_dir in info.get('subdirs', {}).keys():
-                sub_path = main_path / sub_dir
-                sub_path.mkdir(exist_ok=True)
-                self.created_dirs.add(sub_path)
-
-        # 创建重复文件目录
+        # 创建重复文件目录（必需）
         dup_dir = self.base_dir / ".duplicates"
         dup_dir.mkdir(exist_ok=True)
 
-        self.logger.info(f"目录结构创建完成")
+        self.logger.info(f"基础目录初始化完成")
+
+    def ensure_dir_exists(self, dir_path: Path) -> None:
+        """按需创建目录（延迟创建）"""
+        if dir_path not in self.created_dirs and not dir_path.exists():
+            dir_path.mkdir(parents=True, exist_ok=True)
+            self.created_dirs.add(dir_path)
+            self.logger.debug(f"创建目录: {dir_path}")
 
     def get_target_path(self, category: Optional[str], filename: str) -> Path:
-        """获取文件的目标路径"""
+        """获取文件的目标路径（按需创建目录）"""
         if category:
             target_dir = self.base_dir / category
-            if target_dir.exists():
-                return target_dir / filename
+            # 按需创建分类目录
+            self.ensure_dir_exists(target_dir)
+            return target_dir / filename
 
         # 默认放入待分类目录
-        return self.base_dir / config.UNSORTED_DIR / filename
+        unsorted_dir = self.base_dir / config.UNSORTED_DIR
+        self.ensure_dir_exists(unsorted_dir)
+        return unsorted_dir / filename
 
 
 # =============================================================================
